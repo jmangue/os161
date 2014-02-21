@@ -78,6 +78,9 @@ int malloctest(int, char **);
 int mallocstress(int, char **);
 int nettest(int, char **);
 int hellotest(int, char **);
+int threadfun(int, char **);
+int unsafethreadcounter(int, char**);
+int safethreadcounter(int, char**);
 
 /* Routine for running a user-level program. */
 int runprogram(char *progname);

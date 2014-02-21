@@ -52,6 +52,7 @@
 #define _PATH_SHELL "/bin/sh"
 
 #define MAXMENUARGS  16
+#define OPT_A2 1
 
 // XXX this should not be in this file
 void
@@ -458,6 +459,9 @@ static const char *testmenu[] = {
 	"[tt1] Thread test 1                 ",
 	"[tt2] Thread test 2                 ",
 	"[tt3] Thread test 3                 ",
+	"[tf]  Thread Fun test               ",
+	"[utc] UnsafeThreadCounter test      ",
+	"[stc] SafeThreadCounter test			 ",
 #if OPT_NET
 	"[net] Network test                  ",
 #endif
@@ -568,7 +572,9 @@ static struct {
 	{ "tt2",	threadtest2 },
 	{ "tt3",	threadtest3 },
 	{ "sy1",	semtest },
-
+	{ "tf", threadfun },
+	{ "utc", unsafethreadcounter },
+	{ "stc", safethreadcounter },
 	/* synchronization assignment tests */
 	{ "sy2",	locktest },
 	{ "sy3",	cvtest },

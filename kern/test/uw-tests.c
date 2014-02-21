@@ -1,4 +1,3 @@
-
 /*
  * UW - Synchronization test code.
  * Tim Brecht July, 2013
@@ -25,8 +24,11 @@ void
 cleanitems(void)
 {
 	kprintf("cleanitems: Destroying sems and locks\n");
+
 	lock_destroy(testlock);
+	testlock = NULL;
 	sem_destroy(donesem);
+	donesem = NULL;
 }
 
 static

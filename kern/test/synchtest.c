@@ -68,7 +68,13 @@ cleanitems(void)
 	lock_destroy(testlock);
 	cv_destroy(testcv);
 	sem_destroy(donesem);
-	}
+	testsem = NULL;
+	testlock = NULL;	
+	testcv = NULL;
+	donesem = NULL;
+
+
+}
 #endif
 
 static
@@ -219,9 +225,9 @@ locktestthread(void *junk, unsigned long num)
 		lock_release(testlock);
 	}
 	V(donesem);
-#ifdef UW
+// #ifdef UW
   thread_exit();
-#endif
+// #endif
 }
 
 
