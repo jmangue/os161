@@ -164,45 +164,90 @@ lock_create(const char *name)
         }
         
         // add stuff here as needed
-        
+ 		  lock->lock_wchan = wchan_create("Lock WChan");
+		  if (lock->lock_wchan == NULL) {
+			  kfree (lock->lk_name);
+			  kfree (lock);
+			  return NULL;
+		  }
+		  
+		  spinlock_init(&lock->slock);
+		  lock->locked = false;
+		  lock->owner = curthread;
+
         return lock;
 }
 
 void
-lock_destroy(struct lock *lock)
+lock_destroy(struct lock *lk)
 {
-        KASSERT(lock != NULL);
+        KASSERT(lk != NULL);
+		  KASSERT(lk->locked == false);
 
         // add stuff here as needed
-        
-        kfree(lock->lk_name);
-        kfree(lock);
+        spinlock_cleanup(&lk->slock);
+		  wchan_destroy(lk->lock_wchan);
+		  
+		  kfree(lk->lk_name);
+        kfree(lk);
 }
 
 void
-lock_acquire(struct lock *lock)
+lock_acquire(struct lock *lk)
 {
         // Write this
+        // (void)lock;  // suppress warning until code gets written
 
-        (void)lock;  // suppress warning until code gets written
+		  spinlock_acquire(&lk->slock);
+
+		  while (lk->locked == true)
+		  {	  
+		  		// kprintf("%s acquired lock %s.\n", lk->owner->t_name, lk->lk_name);
+		  		wchan_lock(lk->lock_wchan);
+		  		spinlock_release(&lk->slock);
+		  		wchan_sleep(lk->lock_wchan);
+		  		spinlock_acquire(&lk->slock);
+		  }
+		  lk->locked = true;
+		  lk->owner = curthread;
+
+		  spinlock_release(&lk->slock);
 }
 
 void
-lock_release(struct lock *lock)
+lock_release(struct lock *lk)
 {
         // Write this
+		  
+        // void)lock;  // suppress warning until code gets written
+		  KASSERT(lk != NULL);
+		  KASSERT(lk->owner == curthread);
 
-        (void)lock;  // suppress warning until code gets written
+		  if (lock_do_i_hold(lk)) {
+		  		spinlock_acquire(&lk->slock);
+	         lk->locked = false;
+		  		lk->owner = NULL;
+		  		// kprintf("%s released lock %s.\n", lk->owner->t_name, lk->lk_name);
+			   wchan_wakeone(lk->lock_wchan);
+				spinlock_release(&lk->slock);
+		  }
 }
+
+
+
 
 bool
-lock_do_i_hold(struct lock *lock)
+lock_do_i_hold(struct lock *lk)
 {
         // Write this
+		if (lk->owner == curthread) 
+			  return true;
+		else 
+		     return false;
+        
+		  // (void)lock;  // suppress warning until code gets written
 
-        (void)lock;  // suppress warning until code gets written
-
-        return true; // dummy until code gets written
+        // return true; // dummy until code gets written
 }
 
 ////////////////////////////////////////////////////////////
