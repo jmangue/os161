@@ -60,5 +60,6 @@ int sys___time(userptr_t user_seconds, userptr_t user_nanoseconds);
 int sys_helloworld(void);
 int sys__exit(int);
 int sys_printint(int);
+int sys_printstring(char* s, size_t len);
 
 #endif /* _SYSCALL_H_ */

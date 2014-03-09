@@ -125,6 +125,10 @@ syscall(struct trapframe *tf)
 		 case SYS_printint:
 		err = sys_printint(tf->tf_a0);
 		break;
+	
+		 case SYS_printstring:
+		err = sys_printstring(tf->tf_a0, tf->tf_a1);
+		break;
 
 	    default:
 		kprintf("Unknown syscall %d\n", callno);

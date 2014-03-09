@@ -115,7 +115,7 @@
 #endif
 
 /* Required. */
-__DEAD void _exit(int code);
+__DEAD void _exit(int);
 int execv(const char *prog, char *const *args);
 pid_t fork(void);
 int waitpid(pid_t pid, int *returncode, int flags);
@@ -132,6 +132,9 @@ int reboot(int code);
 int sync(void);
 /* mkdir - see sys/stat.h */
 int rmdir(const char *dirname);
+int helloworld(void);
+int printint(int);
+int printstring(char* s, size_t len);
 
 /* Recommended. */
 int getpid(void);

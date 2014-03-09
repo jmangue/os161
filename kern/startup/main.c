@@ -141,7 +141,7 @@ boot(void)
 	#if OPT_A0
 		sayHello();
 	#endif /* OPT_A0 */
-
+	sys_helloworld();
 }
 
 /*
