@@ -130,6 +130,10 @@ syscall(struct trapframe *tf)
 		err = sys_printstring(tf->tf_a0, tf->tf_a1);
 		break;
 
+		 case SYS_write:
+		err = sys_write(tf->tf_a0, tf->tf_a1, tf->tf_a2);
+		break;
+
 	    default:
 		kprintf("Unknown syscall %d\n", callno);
 		err = ENOSYS;
@@ -143,8 +147,15 @@ syscall(struct trapframe *tf)
 		 * userlevel to a return value of -1 and the error
 		 * code in errno.
 		 */
+		if(err < 0) // negative values indicate success and can be used to pass nums back to caller
+		{
+			tf->tf_v0 = -retval;
+			tf->tf_a3 = 0;
+		}
+		else {
 		tf->tf_v0 = err;
 		tf->tf_a3 = 1;      /* signal an error */
+		}
 	}
 	else {
 		/* Success. */
