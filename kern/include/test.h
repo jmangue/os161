@@ -83,8 +83,8 @@ int unsafethreadcounter(int, char**);
 int safethreadcounter(int, char**);
 
 /* Routine for running a user-level program. */
-int runprogram(char *progname);
-
+// int runprogram(char *progname);
+int runprogram(char *progname, int nargs, char* argv[]);
 /* Kernel menu system. */
 void menu(char *argstr);
 

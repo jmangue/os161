@@ -52,11 +52,11 @@
  * Calls vfs_open on progname and thus may destroy it.
  */
 int
-runprogram(char *progname)
+runprogram(char *progname, int nargs, char** argv)
 {
 	struct addrspace *as;
 	struct vnode *v;
-	vaddr_t entrypoint, stackptr;
+	vaddr_t entrypoint, stackptr, argptr;
 	int result;
 
 	/* Open the file. */
@@ -92,14 +92,43 @@ runprogram(char *progname)
 
 	/* Define the user stack in the address space */
 	result = as_define_stack(as, &stackptr);
+	
 	if (result) {
 		/* p_addrspace will go away when curproc is destroyed */
 		return result;
+	}	
+
+	/*
+	int pos= 4*nargs; //starting position for data
+	// fill kargv[i] with actual user space ptr
+	int kargv[nargs]; // used for tracking offset
+	char kbuf[128];
+	int arg = 0;
+	int totalcopied = 0;
+	for(int i=0; i < nargs; i++)
+	{
+		int numcopied=0;
+		// skip until we hit a NULL char
+		while(argv[i][numcopied] != '\0') {
+			kbuf[pos++] = argv[i][numcopied++];
+			totalcopied++;
+		}
+		// pad so it's divisible by 4
+		while ((numcopied++ % 4) != 0)
+		{
+			kbuf[pos++] = '\0';
+			totalcopied++;
+		}
+		// set pointer
+		kargv[arg] = pos;
+		arg += 4;
 	}
+	*/
+
+
 
 	/* Warp to user mode. */
-	enter_new_process(0 /*argc*/, NULL /*userspace addr of argv*/,
-			  stackptr, entrypoint);
+	enter_new_process(nargs, argptr, stackptr, entrypoint);
 	
 	/* enter_new_process does not return. */
 	panic("enter_new_process returned\n");
